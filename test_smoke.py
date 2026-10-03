@@ -58,7 +58,7 @@ def test_physical_verifier():
 
 
 def test_browser_e2e():
-    print("[3/3] 测试真实 Chrome 浏览器轻量驱动与 DOM 感知 (Headless 快速冒烟)...")
+    print("[3/3] 测试真实浏览器 (Edge/Chrome) 轻量驱动与 DOM 感知 (Headless 快速冒烟)...")
     driver = BrowserDriver(headless=True)
     try:
         # 打开本地空白或轻量导航

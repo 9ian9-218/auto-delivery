@@ -8,28 +8,37 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 def find_browser_path() -> str:
-    """自动探测本机 Chrome 或 Edge 浏览器路径"""
-    env_path = os.getenv("CHROME_PATH")
+    """自动探测本机浏览器路径：优先 Edge，Chrome 作为兜底"""
+    # 显式指定的通用路径优先（.env: BROWSER_PATH）
+    env_path = os.getenv("BROWSER_PATH") or os.getenv("CHROME_PATH")
     if env_path and os.path.exists(env_path):
         return env_path
 
-    candidates = [
-        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"),
+    # Edge 优先（Chromium 内核，CDP 能力一致）
+    edge_candidates = [
         r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
         r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
         os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Edge\Application\msedge.exe"),
     ]
-    for path in candidates:
+    for path in edge_candidates:
         if os.path.exists(path):
             return path
 
-    which_chrome = shutil.which("chrome") or shutil.which("google-chrome") or shutil.which("msedge")
-    if which_chrome:
-        return which_chrome
+    # Chrome 兜底
+    chrome_candidates = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"),
+    ]
+    for path in chrome_candidates:
+        if os.path.exists(path):
+            return path
 
-    return r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+    which_browser = shutil.which("msedge") or shutil.which("chrome") or shutil.which("google-chrome")
+    if which_browser:
+        return which_browser
+
+    return r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
 
 class Settings:

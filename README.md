@@ -13,8 +13,8 @@
    - **慢轨 (按需接入)**：仅在需要键入复杂文本（`TYPE_TEXT`）或任务受阻（`BLOCKED` 自愈）时唤醒 Codex / 通用大模型。
 2. **真实物理终态校验 (Physical Verifier)**：
    - 杜绝传统小模型的“假完成”幻觉，以 DOM 突变位移、页面关键特征与网络终态做严格闭环断言。
-3. **CDP 原生免驱动 (Zero-Driver Chrome)**：
-   - 直接无缝接管本机已安装的 Google Chrome (`chrome.exe`)，无需额外下载 WebDriver。
+3. **CDP 原生免驱动 (Zero-Driver)**：
+   - 默认无缝接管本机 **Microsoft Edge** (`msedge.exe`)，也可通过 `BROWSER_PATH` 一键切换 Chrome，无需额外下载 WebDriver。
 4. **交互过程直观可视**：
    - 默认开启有头模式，执行点击和输入时目标元素带有高亮红框与光晕特效，人机协作清晰可见。
 5. **GPU 加速推理（自动适配）**：
@@ -24,7 +24,7 @@
 
 ## 📦 部署到其他电脑
 
-**前置要求**：Windows 10/11、Python 3.10+（勾选 Add to PATH）、Chrome 或 Edge 浏览器；NVIDIA 显卡可选（用于 GPU 加速）。
+**前置要求**：Windows 10/11、Python 3.10+（勾选 Add to PATH）、Edge 浏览器（Chrome 亦支持）；NVIDIA 显卡可选（用于 GPU 加速）。
 
 ### 方式 1：从 GitHub 克隆（推荐）
 ```bash
@@ -93,7 +93,7 @@ python runner.py --url https://www.baidu.com --goal "搜索2026年最新科技�
 
 | 配置项 | 默认值 | 说明 |
 |---|---|---|
-| `CHROME_PATH` | 自动检测 Chrome/Edge | 浏览器可执行文件路径 |
+| `BROWSER_PATH` | 自动探测（优先 Edge，Chrome 兜底） | 浏览器可执行文件路径 |
 | `HEADLESS` | `false` | `true` 为后台无头静默，`false` 为桌面可见窗口 |
 | `FAST_PATH_MODE` | `auto` | `auto`（优先 Jev -> 本地Laya服务 -> 本地规则）、`laya_local`（直接进程内加载已下载模型）、`laya`、`jev`、`heuristic` |
 | `TYPESAFE_API_KEY` | *(留空)* | 若使用云端 Jev，填写 TypeSafe API Key |
@@ -159,7 +159,7 @@ D:\default\
 └── scenario5/                  # 核心实现包
     ├── config.py               # 环境配置与浏览器探测
     ├── browser/
-    │   ├── driver.py           # Chrome 驱动器（免驱动接管、高亮反馈、点击输入）
+    │   ├── driver.py           # 浏览器驱动器（免驱动接管、高亮反馈、点击输入）
     │   ├── observer.py         # 页面提取器（可见控件提取、DOM 打标、抗漂移指纹）
     │   └── verifier.py         # 物理终态校验器（DOM 突变位移、完成断言）
     ├── decision/
