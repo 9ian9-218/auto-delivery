@@ -21,5 +21,11 @@ nul
 Thumbs.db
 .DS_Store
 
-# 浏览器用户数据
+# 浏览器用户数据与临时目录
 browser_data/
+.ab-profile/
+.*-copy/
+*.log
+*.png
+shots/
+

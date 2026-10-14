@@ -19,6 +19,9 @@ class BrowserDriver:
         if settings.BROWSER_PATH:
             co.set_browser_path(settings.BROWSER_PATH)
         co.set_local_port(self.port)
+        # 固定用户数据目录，避免登录态落在 %TEMP% 被清理
+        if getattr(settings, "USER_DATA_PATH", ""):
+            co.set_user_data_path(settings.USER_DATA_PATH)
         co.headless(self.headless)
         co.set_argument("--no-first-run")
         co.set_argument("--no-default-browser-check")
@@ -27,7 +30,14 @@ class BrowserDriver:
         try:
             self.page = ChromiumPage(addr_or_opts=co)
         except Exception as e:
-            # 如果指定固定端口失败，尝试让 DrissionPage 自动分配端口启动
+            # 已固定用户数据目录时，绝不回退到 auto_port —— 那会另起一个隔离的临时 profile，
+            # 导致登录态与扩展全部丢失（本项目明确禁止）。失败就明确报错。
+            if getattr(settings, "USER_DATA_PATH", ""):
+                raise RuntimeError(
+                    f"浏览器启动/接管失败（已固定 USER_DATA_PATH={settings.USER_DATA_PATH}，"
+                    f"禁止回退到临时 profile）: {type(e).__name__}: {e}"
+                ) from e
+            # 未固定目录时，才允许让 DrissionPage 自动分配端口启动
             co.auto_port()
             self.page = ChromiumPage(addr_or_opts=co)
 

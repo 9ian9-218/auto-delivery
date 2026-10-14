@@ -45,6 +45,9 @@ class Settings:
     # 浏览器参数
     BROWSER_PATH: str = find_browser_path()
     REMOTE_DEBUG_PORT: int = int(os.getenv("REMOTE_DEBUG_PORT", "9222"))
+    # 浏览器用户数据目录：固定到稳定路径，登录态（cookie）可跨浏览器重启/电脑重启保留。
+    # 留空则回退 DrissionPage 默认的 %TEMP%\DrissionPage\userData\<port>（会被系统清临时文件清掉）
+    USER_DATA_PATH: str = os.getenv("USER_DATA_PATH", "")
     HEADLESS: bool = os.getenv("HEADLESS", "false").lower() in ("true", "1", "yes")
     HIGHLIGHT_ELEMENT: bool = os.getenv("HIGHLIGHT_ELEMENT", "true").lower() in ("true", "1", "yes")
     HIGHLIGHT_DURATION: float = float(os.getenv("HIGHLIGHT_DURATION", "0.3"))

@@ -50,6 +50,7 @@ class TaskService:
             return 200, result
         except Exception as e:
             print(f"[error] {type(e).__name__}: {e}", flush=True)
+            self._agent = None
             return 500, {"error": f"{type(e).__name__}: {e}"}
         finally:
             self._lock.release()
