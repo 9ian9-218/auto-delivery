@@ -1,3 +1,4 @@
+import re
 from typing import List, Dict, Any, Tuple
 
 
@@ -43,7 +44,9 @@ class PhysicalVerifier:
             return False, "物理终态核验拦截：重定向至安全风控拦截页"
 
         # 3. 目标语义与页面信息的软对齐检查
-        goal_tokens = [w for w in goal.replace("，", " ").replace("。", " ").split() if len(w) > 1]
+        target = re.sub(r"^(?:搜索|查找|查询|打开|进入|点击|填写|输入)\s*", "", goal.strip())
+        goal_tokens = [w for w in target.replace("，", " ").replace("。", " ").split() if len(w) > 1]
         matched_tokens = [t for t in goal_tokens if t.lower() in combined_text or t.lower() in url_lower]
-        
+        if not matched_tokens:
+            return False, "物理终态核验拦截：目标未出现在页面或URL中 (命中指标: 0 个匹配词)"
         return True, f"物理终态核验通过 (命中指标: {len(matched_tokens)} 个匹配词)"

@@ -47,7 +47,7 @@ if not exist ".env" copy .env.example .env >nul
 
 :: ---------- 5. 下载模型权重（约 650MB，已存在则跳过）----------
 echo [5/5] 检查模型权重...
-.venv\Scripts\python.exe download_model.py
+.venv\Scripts\python.exe tools\download_model.py
 if errorlevel 1 (
     echo [WARN] 模型下载失败，Agent 仍可以内置规则模式运行（双击 run.bat 即用）
 )
@@ -62,7 +62,7 @@ if errorlevel 1 (
 
 echo.
 echo ============================================================
-echo   部署完成！双击 start_all.bat 启动（GPU 模型服务 + Agent）
+echo   部署完成！双击 start.bat 启动（菜单选择 GPU 模型服务 / API / Agent）
 echo   或双击 run.bat 仅以内置规则模式启动
 echo ============================================================
 pause

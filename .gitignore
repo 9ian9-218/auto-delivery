@@ -1,31 +1,58 @@
-# Python
+# ─── Python ───────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.egg-info/
 dist/
 build/
 
-# 虚拟环境
+# ─── 虚拟环境 ─────────────────────────────────────────────
 .venv/
 venv/
 
-# 模型权重（部署时由 setup.bat 自动下载，约 650MB 不入库）
+# ─── 模型权重（setup.bat 自动下载，约 650MB）───────────────
 models/
 
-# 本地配置（含机器相关路径，模板为 .env.example）
+# ─── 本地配置（模板见 .env.example）───────────────────────
 .env
 
-# 会话与系统产物
-.zcode/
+# ─── 系统与编辑器产物 ────────────────────────────────────
 nul
 Thumbs.db
 .DS_Store
+.zcode/
+.zcodeignore
+skills-lock.json
 
-# 浏览器用户数据与临时目录
+# ─── 浏览器数据与截图 ────────────────────────────────────
 browser_data/
 .ab-profile/
 .*-copy/
 *.log
 *.png
+shot*/
 shots/
 
+# ─── 运行时状态 ──────────────────────────────────────────
+sms_history.jsonl
+
+# ─── 非本仓库内容（已迁出或就地排除）─────────────────────
+# 求职工作区：投递断点、看板脚本与对话产物
+data/
+work/
+research/
+linkswift/
+待投递.md
+
+# Agent 技能与插件（独立演进，不随本仓库版本管理）
+.agents/
+.workbuddy/
+plugins/
+ofm-setup/
+downloads/
+
+# 第三方工具（REA 已迁至 E:\REA，此处仅防误建）
+rea/
+
+# ─── 归档区（物理在 D:\default-archive，此处防误建）────────
+backup-dsh-profile-*/
+.dsh-purge-manual/

@@ -66,7 +66,6 @@ class Settings:
 
     # 状态机超参数
     MAX_STEPS: int = int(os.getenv("MAX_STEPS", "60"))
-    ACTION_TIMEOUT: float = float(os.getenv("ACTION_TIMEOUT", "15.0"))
     STEP_DELAY: float = float(os.getenv("STEP_DELAY", "0.5"))
 
 

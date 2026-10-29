@@ -2,7 +2,34 @@
 
 本项目是基于《Codex × Jev × Laya 使用报告》中**场景 5（受限网页操作 / 双轨协同浏览器自动化）**在 Windows 环境下的完整落地工程。
 
-**多机快速部署**：Git clone（或解压）后双击 `setup.bat` 一键完成环境搭建、依赖安装与模型下载；随后双击 `start_all.bat` 即可使用。详见下文 [📦 部署到其他电脑](#-部署到其他电脑)。
+**多机快速部署**：Git clone（或解压）后双击 `setup.bat` 一键完成环境搭建、依赖安装与模型下载；随后双击 `start.bat` 选择要启动的服务。详见下文 [📦 部署到其他电脑](#-部署到其他电脑)。
+
+---
+
+## 📁 项目结构
+
+```
+.
+├── scenario5/               核心包
+│   ├── agent.py             双轨主状态机
+│   ├── config.py            配置（读 .env）
+│   ├── browser/             driver · observer · verifier
+│   └── decision/            schemas · fast_path · slow_path
+├── services/                iPhone 短信接收服务（8099）
+│   ├── sms_service.py       服务端
+│   └── sms_client.py        客户端（取验证码）
+├── tools/                   独立工具脚本
+│   ├── start_laya_server.py Laya 模型服务（8791）
+│   └── download_model.py    模型权重下载
+├── runner.py                交互控制台入口
+├── api_server.py            任务 API 服务（8792）
+├── test_smoke.py            冒烟自检
+├── setup.bat                一键部署
+├── start.bat                统一服务启动器（菜单式）
+└── run.bat                  快速进入交互模式
+```
+
+**三个 bat 的分工**：`setup.bat` 装环境 → `start.bat` 启服务（菜单选 GPU 模型 / API / 短信 / Agent）→ `run.bat` 直接进交互控制台（最轻量，纯规则模式也能跑）。
 
 ---
 
@@ -38,7 +65,7 @@ cd scenario5-browser-agent
 4. 从 hf-mirror 镜像下载 Laya-Browser 微调模型（约 650MB，已存在自动跳过）；
 5. 运行冒烟自检验证环境。
 
-完成后双击 **`start_all.bat`**（GPU 模型服务 + Agent 一起拉起）或 **`run.bat`**（纯规则模式，最轻量）。
+完成后双击 **`start.bat`**（菜单选「全部启动」拉起 GPU 模型服务 + API）或 **`run.bat`**（纯规则模式，最轻量）。
 
 ### 方式 2：离线压缩包
 将发布附件中的 `scenario5-browser-agent.zip` 解压到任意目录，同样双击 `setup.bat` 即可（模型权重通过脚本在线下载，保持压缩包轻量）。
@@ -111,16 +138,17 @@ python runner.py --url https://www.baidu.com --goal "搜索2026年最新科技�
 提供两种使用方式：
 
 ### 方式 1：双击启动独立 HTTP 微服务（推荐）
-双击运行本目录下的 **`start_laya_server.bat`**：
+双击 `start.bat`，菜单选 **[4] Laya GPU 模型服务**：
 - 自动检测并使用 GPU（控制台会显示「GPU 加速已启用」）；
 - 在本地启动决策服务：`http://127.0.0.1:8791/v1/decide`（同时兼容 `/v1/systemone`）；
 - 此时运行 `run.bat`，Agent 快轨将自动探活并调用该 GPU 模型参与决策。
 
 ### 方式 2：一键全部启动（模型服务 + Agent 一起拉起）
-双击运行 **`start_all.bat`**：
+双击运行 **`start.bat`**，菜单选 **[1] 全部启动**：
 - 自动在新窗口启动 GPU 模型服务（约 20 秒完成加载）；
-- 随后自动打开浏览器 Agent 交互控制台；
-- 在控制台输入网址与任务即可开始自动化。
+- 随后启动任务 API 服务（端口 8792）；
+- 交互控制台另运行 `start.bat agent` 或直接双击 `run.bat`。
+
 
 ### 方式 3：纯进程内直接加载推理（免服务）
 修改 `.env` 中的：
@@ -145,17 +173,22 @@ FAST_PATH_MODE=laya_local
 ```text
 D:\default\
 ├── setup.bat                   # ⭐ 新机一键部署（环境+依赖+模型下载+自检）
-├── start_all.bat               # ⭐ 一键启动（GPU 模型服务 + 浏览器 Agent）
-├── run.bat                     # 仅启动浏览器 Agent（规则模式）
-├── download_model.py           # 模型权重下载脚本（镜像优先，已存在自动跳过）
-├── start_laya_server.bat/.py   # 本地微调模型 GPU 推理服务（端口 8791）
+├── start.bat                   # ⭐ 统一服务启动器（菜单：全部/Agent/API/Laya/短信）
+├── run.bat                     # 快速进入交互控制台（规则模式亦可）
 ├── runner.py                   # 命令行交互主程序
+├── api_server.py               # 任务 API 服务（端口 8792，供其他程序调用）
+├── test_smoke.py               # 健康检查与冒烟测试脚本
 ├── pyproject.toml              # 项目定义与依赖
 ├── .env.example                # 配置模板（setup.bat 自动复制为 .env）
 ├── .gitignore                  # 排除模型权重/虚拟环境/本地配置
-├── test_smoke.py               # 健康检查与冒烟测试脚本
 ├── models/                     # 模型存放目录（部署时自动下载，不入库）
 │   └── laya-browser/           # cklxx/laya-browser 完整权重与代码
+├── tools/                      # 独立工具脚本
+│   ├── start_laya_server.py    # 本地微调模型 GPU 推理服务（端口 8791）
+│   └── download_model.py       # 模型权重下载（镜像优先，已存在自动跳过）
+├── services/                   # iPhone 短信验证码接收
+│   ├── sms_service.py          # 服务端（端口 8099）
+│   └── sms_client.py           # 客户端（供自动化脚本取码）
 └── scenario5/                  # 核心实现包
     ├── config.py               # 环境配置与浏览器探测
     ├── browser/

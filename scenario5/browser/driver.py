@@ -140,6 +140,15 @@ class BrowserDriver:
         """保存当前页面截图"""
         self.page.get_screenshot(path=path)
 
+    def detach(self):
+        """断开当前页面控制，保留浏览器窗口与已有登录会话。"""
+        if self.page:
+            try:
+                self.page.disconnect()
+            except Exception:
+                pass
+            self.page = None
+
     def close(self):
         """关闭浏览器会话"""
         if self.page:

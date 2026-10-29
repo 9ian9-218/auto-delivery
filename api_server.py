@@ -2,6 +2,7 @@
 双轨浏览器 Agent HTTP 任务服务（供其他 Agent / 程序调用）
 - GET  /health   : 探活 {ok, busy}
 - POST /v1/task  : 执行一个浏览器任务 {"url": ..., "goal": ...} → execute_task 结果 JSON
+- POST /v1/lease : 固定 DOM 工具获取/释放共享任务锁；崩溃后租约自动过期
 
 任务串行执行（单浏览器实例），繁忙时立即返回 409 由调用方稍后重试；
 浏览器在首个任务到达时才启动，并在多个任务间复用。
@@ -11,6 +12,7 @@ import json
 import sys
 import argparse
 import threading
+import secrets
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 from scenario5.config import settings
@@ -30,10 +32,37 @@ class TaskService:
         self._headless = headless  # None=跟随 .env, True/False=命令行覆盖
         self._agent: DualTrackAgent | None = None
         self._lock = threading.Lock()
+        self._lease_guard = threading.Lock()
+        self._lease_token = None
+        self._lease_timer = None
 
     @property
     def busy(self) -> bool:
         return self._lock.locked()
+
+    def acquire_lease(self, ttl_seconds=240):
+        """Share the task lock with fixed DOM workers, including crash expiry."""
+        if isinstance(ttl_seconds, bool) or not isinstance(ttl_seconds, int) or not 1 <= ttl_seconds <= 240:
+            return 400, {"error": "ttl_seconds must be an integer from 1 to 240"}
+        with self._lease_guard:
+            if not self._lock.acquire(blocking=False):
+                return 409, {"error": "busy"}
+            token = secrets.token_urlsafe(24)
+            self._lease_token = token
+            self._lease_timer = threading.Timer(ttl_seconds, self.release_lease, args=(token,))
+            self._lease_timer.daemon = True
+            self._lease_timer.start()
+            return 200, {"ok": True, "token": token, "ttl_seconds": ttl_seconds}
+
+    def release_lease(self, token):
+        with self._lease_guard:
+            if not token or token != self._lease_token:
+                return 409, {"error": "lease_not_owned_or_expired"}
+            self._lease_token = None
+            self._lease_timer.cancel()
+            self._lease_timer = None
+            self._lock.release()
+            return 200, {"ok": True}
 
     def run(self, goal: str, start_url):
         if not self._lock.acquire(blocking=False):
@@ -56,11 +85,13 @@ class TaskService:
             self._lock.release()
 
     def close(self):
+        """Detach automation on shutdown; keep the user browser and logins alive."""
         if self._agent is not None:
             try:
-                self._agent.driver.close()
+                self._agent.driver.detach()
             except Exception:
                 pass
+            self._agent = None
 
 
 def make_handler(service: TaskService):
@@ -83,7 +114,7 @@ def make_handler(service: TaskService):
                 self._send(404, {"error": f"unknown path {self.path}"})
 
         def do_POST(self):
-            if self.path != "/v1/task":
+            if self.path not in ("/v1/task", "/v1/lease"):
                 self._send(404, {"error": f"unknown path {self.path}"})
                 return
             try:
@@ -93,6 +124,15 @@ def make_handler(service: TaskService):
                 except UnicodeDecodeError:
                     # Windows 终端/curl 可能以 GBK 发送中文请求体，回退解码
                     body = json.loads(raw.decode("gbk"))
+                if self.path == "/v1/lease":
+                    if body.get("action") == "acquire":
+                        code, payload = service.acquire_lease(body.get("ttl_seconds", 240))
+                    elif body.get("action") == "release":
+                        code, payload = service.release_lease(body.get("token"))
+                    else:
+                        code, payload = 400, {"error": "lease action must be acquire or release"}
+                    self._send(code, payload)
+                    return
                 goal = str(body.get("goal") or "").strip()
                 if not goal:
                     self._send(400, {"error": "missing 'goal'"})
@@ -125,7 +165,7 @@ def main():
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\n[exit] 正在关闭浏览器并退出...", flush=True)
+        print("\n[exit] 正在断开浏览器控制并退出（保留窗口和登录态）...", flush=True)
     finally:
         service.close()
 
