@@ -43,7 +43,7 @@ research/
 linkswift/
 待投递.md
 
-# Agent 技能与插件（独立演进，不随本仓库版本管理）
+# Agent 技能与插件（用户级 ~/.agents 维护，不随本仓库版本管理）
 .agents/
 .workbuddy/
 plugins/
