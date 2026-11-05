@@ -1,0 +1,57 @@
+# work/release.manifest —— 「什么是功能」的唯一真源
+#
+# 由两个消费者读取，禁止各写各的白名单：
+#   work/tools/pack_release.py     → [functional] 段决定 zip 里装什么
+#   work/tools/check_isolation.py  → 校验 git 追踪的文件是否全部落在 [functional] 里
+#
+# 每行一个相对仓库根的 glob；# 开头为注释；空行忽略。
+# 段：
+#   [functional]  功能：必须进版本库、必须进分发包、必须无 PII
+#   [generated]   可重生成 / 用户态：既不入库也不入包，仅作声明（防止有人误加进来）
+
+[functional]
+.gitignore
+AGENTS.md
+work/release.manifest
+work/DATA_ISOLATION.md
+work/ckpt.schema.json
+work/user_config.example.json
+work/mail_auth.example.json
+work/tools/*.py
+work/tests/*.py
+work/rfa/*.py
+work/rfa/ccpi_desc.txt
+docs/**
+.agents/skills/campus-apply-pipeline/**
+# auto-resume-submit 的 work/ 是运行态产出（候选人清单、抓取结果），属于用户数据
+.agents/skills/auto-resume-submit/SKILL.md
+.agents/skills/auto-resume-submit/config.json
+.agents/skills/auto-resume-submit/references/**
+.agents/skills/auto-resume-submit/scripts/**
+
+[generated]
+# 用户态档案与凭证
+work/user_config.json
+work/mail_auth.json
+work/application_profile.json
+work/rfa/profile_v2.json
+work/rfa/shots/**
+# 投递记录与台账
+work/ckpt_*.json
+work/gates.jsonl
+work/mail_outbox.jsonl
+work/applied_index.json
+work/pending_human.json
+work/browser_sessions.json
+# 草稿、截图、归档
+work/_draft/**
+work/_archive/**
+work/shot_*.png
+# 可重生成的数据池
+data/**
+# 非本仓库内容（外部项目 / 调研 / 逆向产物 / 构建输出）
+research/**
+resume-autofill/**
+re-niuke/**
+archive/**
+dist/**

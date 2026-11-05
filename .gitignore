@@ -12,7 +12,7 @@ venv/
 # ─── 模型权重（setup.bat 自动下载，约 650MB）───────────────
 models/
 
-# ─── 本地配置（模板见 .env.example）───────────────────────
+# ─── 本地配置 ─────────────────────────────────────────────
 .env
 
 # ─── 系统与编辑器产物 ────────────────────────────────────
@@ -23,36 +23,85 @@ Thumbs.db
 .zcodeignore
 skills-lock.json
 
-# ─── 浏览器数据与截图 ────────────────────────────────────
+# ─── 浏览器数据与运行日志 ────────────────────────────────
 browser_data/
 .ab-profile/
 .*-copy/
 *.log
-*.png
 shot*/
-shots/
-
-# ─── 运行时状态 ──────────────────────────────────────────
 sms_history.jsonl
 
-# ─── 非本仓库内容（已迁出或就地排除）─────────────────────
-# 求职工作区：投递断点、看板脚本与对话产物
+# ═══════════════════════════════════════════════════════════
+# 隔离总则 —— 详见 work/DATA_ISOLATION.md
+#   功能     = 进版本库 + 进分发包，唯一真源 work/release.manifest
+#   用户数据 = 不进版本库、不进分发包
+#   自检     = python work/tools/check_isolation.py
+# 下面的放行清单必须与 manifest 的 [functional] 段一致；漂移由自检脚本抓。
+# ═══════════════════════════════════════════════════════════
+
+# ─── 一、用户数据根：整目录不追踪 ─────────────────────────
 data/
-work/
+work/*
 research/
-linkswift/
+re-niuke/
+resume-autofill/
+archive/
 待投递.md
 
-# Agent 技能与插件（用户级 ~/.agents 维护，不随本仓库版本管理）
-.agents/
+# ─── 二、work/ 的功能白名单 ──────────────────────────────
+!work/release.manifest
+!work/ckpt.schema.json
+!work/user_config.example.json
+!work/mail_auth.example.json
+!work/DATA_ISOLATION.md
+!work/tools/
+!work/tests/
+# work/rfa 只放行驱动脚本与站点说明；档案与截图仍属用户数据
+!work/rfa/
+work/rfa/*
+!work/rfa/*.py
+!work/rfa/ccpi_desc.txt
+
+# 二级防护：放行目录是整棵放行的，靠这几条挡住夹带进来的用户数据
+work/tools/user_config.json
+work/tools/mail_auth.json
+work/tools/ckpt_*.json
+work/tools/**/*.png
+work/tools/**/*.jpg
+work/tests/ckpt_*.json
+work/tests/**/*.png
+
+# 凭证、真实配置、断点、台账与截图（再确认一次，防止被上面的放行规则勾回来）
+work/user_config.json
+work/mail_auth.json
+work/application_profile.json
+work/rfa/profile_v2.json
+work/browser_sessions.json
+work/ckpt_*.json
+work/gates.jsonl
+work/mail_outbox.jsonl
+work/applied_index.json
+work/pending_human.json
+work/_draft/
+work/_archive/
+work/shot_*.png
+work/rfa/shots/
+
+# ─── 三、Agent 技能：只放行流程依赖的两个 skill ───────────
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/campus-apply-pipeline/
+!.agents/skills/auto-resume-submit/
+# skill 自己的运行态产出（候选人清单、抓取结果）属于用户数据
+.agents/skills/*/work/
 .workbuddy/
 plugins/
 ofm-setup/
 downloads/
 
-# 第三方工具（REA 已迁至 E:\REA，此处仅防误建）
+# ─── 四、其它非本仓库内容 ────────────────────────────────
+linkswift/
 rea/
-
-# ─── 归档区（物理在 D:\default-archive，此处防误建）────────
 backup-dsh-profile-*/
 .dsh-purge-manual/
