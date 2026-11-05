@@ -43,6 +43,10 @@ def load_manifest(path=None):
             continue
         if section is None:
             raise ValueError("%s:%d 出现在任何段之前：%s" % (path, lineno, line))
+        # 版本无关的 glob：Python 3.11 的 Path.glob("x/**") 只返回目录（3.13 才含文件），
+        # 统一补成 "x/**/*"，两种版本都能取到文件。
+        if line.endswith("/**"):
+            line += "/*"
         out[section].append(line)
     if not out["functional"]:
         raise ValueError("%s 的 [functional] 段为空" % path)

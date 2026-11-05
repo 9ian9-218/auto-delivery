@@ -67,6 +67,9 @@ def test_expand_and_empty_glob():
     found, empty = ci.expand(tmp, ["work/tools/*.py", "docs/**", "nothing/*.py"])
     assert set(found) == {"work/tools/a.py", "work/tools/b.py", "docs/adr/0001.md"}, found
     assert empty == ["nothing/*.py"], empty
+    # 可移植写法：Python 3.11 的 "x/**" 只返回目录，"x/**/*" 才含文件
+    nested, _ = ci.expand(tmp, ["docs/**/*"])
+    assert set(nested) == {"docs/adr/0001.md"}, nested
 
 
 def test_hardcoded_path_detected():
