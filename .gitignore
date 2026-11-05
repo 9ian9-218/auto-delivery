@@ -58,6 +58,14 @@ archive/
 !work/DATA_ISOLATION.md
 !work/tools/
 !work/tests/
+# 本机看板：代码与页面进库，数据库与快照不进
+!work/board/
+work/board/*
+!work/board/*.py
+!work/board/*.md
+!work/board/static/
+!work/board/static/*
+
 # work/rfa 只放行驱动脚本与站点说明；档案与截图仍属用户数据
 !work/rfa/
 work/rfa/*

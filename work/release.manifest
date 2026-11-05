@@ -19,6 +19,9 @@ work/user_config.example.json
 work/mail_auth.example.json
 work/tools/*.py
 work/tests/*.py
+work/board/*.py
+work/board/*.md
+work/board/static/*.html
 work/rfa/*.py
 work/rfa/ccpi_desc.txt
 docs/**
