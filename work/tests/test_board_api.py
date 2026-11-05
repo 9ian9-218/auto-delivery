@@ -149,6 +149,24 @@ def test_exams_and_unapplied():
         httpd.shutdown()
 
 
+def test_page_injects_live_data():
+    """首页必须是模板实时注入：数据在、__DATA__ 不残留、标题可读。"""
+    httpd, port, _ = start()
+    try:
+        c = http.client.HTTPConnection("127.0.0.1", port, timeout=10)
+        c.request("GET", "/")
+        r = c.getresponse()
+        html = r.read().decode("utf-8")
+        c.close()
+        assert r.status == 200, r.status
+        assert "<title>投递看板</title>" in html, "标题未替换"
+        assert "__DATA__" not in html, "仍有未注入的 __DATA__ 占位"
+        assert "甲公司" in html, "示例数据未注入"
+        assert 'id="statCards"' in html and 'id="navBar"' in html, "模板骨架缺失"
+    finally:
+        httpd.shutdown()
+
+
 def test_auth_and_info():
     httpd, port, _ = start(token="s3cret")
     try:

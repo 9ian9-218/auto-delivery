@@ -321,6 +321,39 @@ def exclude_unapplied(con, company):
 
 
 # ---------------------------------------------------------------- 迁移
+# ---------------------------------------------------------------- 页面数据
+def blob(con):
+    """一次性导出看板渲染所需的 8 个集合 + stats（形状对齐旧看板的页面 DATA）。"""
+    apps = [{"company": r["company"], "position": r["position"], "status": r["status"],
+             "date": r["date"], "stageDate": r["stage_date"], "n": r["n"]}
+            for r in _rows(con, "SELECT * FROM applications ORDER BY date DESC, id DESC")]
+    jobs = [{k: r[k] for k in ("company", "industry", "batch", "date", "direction",
+                               "status", "applied", "applied_at")}
+            for r in _rows(con, "SELECT * FROM jobs ORDER BY date DESC, company")]
+    codes = [{"company": r["company"], "group": r["grp"], "code": r["code"],
+              "refOnly": bool(r["ref_only"])}
+             for r in _rows(con, "SELECT * FROM codes ORDER BY company")]
+    unap = [{k: r[k] for k in ("company", "industry", "batch", "date", "direction", "code", "source")}
+            for r in _rows(con, "SELECT * FROM unapplied WHERE excluded = 0 ORDER BY date DESC")]
+    ended = [[r["company"], r["batch"], r["date"]]
+             for r in _rows(con, "SELECT * FROM ended ORDER BY date DESC")]
+    rules = [[r["company"], r["field"], r["rule"]]
+             for r in _rows(con, "SELECT * FROM rules ORDER BY company")]
+    exam_rows = [{"company": r["company"], "kind": r["kind"], "when": r["when_"],
+                  "place": r["place"], "link": r["link"], "note": r["note"]}
+                 for r in _rows(con, "SELECT company, kind, when_, place, link, note FROM exams ORDER BY when_")]
+    link_rows = {r["company"]: {k: r[k] for k in ("url", "code", "note", "updated")}
+                 for r in _rows(con, "SELECT * FROM links ORDER BY company")}
+    st = stats(con)
+    cats = [status_category(r["status"]) for r in _rows(con, "SELECT status FROM applications")]
+    failed_co = len({r["company"] for r in _rows(con, "SELECT company, status FROM applications")
+                     if status_category(r["status"]) == "failed"})
+    st["failed_co"] = failed_co
+    return {"apps": apps, "jobs": jobs, "codes": codes, "unapplied": unap,
+            "ended": ended, "rules": rules, "exams": exam_rows, "links": link_rows,
+            "stats": st, "updated": now(), "today": today()}
+
+
 def import_snapshot(con, path):
     """把 board_data.json（旧看板的页面渲染 blob）导入本机库，返回各表计数。"""
     d = json.load(open(path, encoding="utf-8"))

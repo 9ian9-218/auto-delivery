@@ -58,6 +58,14 @@ def overview_payload(con):
     }
 
 
+def render_board_html():
+    """把实时数据注入模板：一个字面量 __DATA__ → 当前库的 8 个集合。"""
+    tpl_path = os.path.join(STATIC, "template.html")
+    tpl = open(tpl_path, encoding="utf-8").read()
+    payload = json.dumps(store.blob(CON), ensure_ascii=False).replace("</", "<\\/")
+    return tpl.replace("__DATA__", payload)
+
+
 def endpoints_table():
     return [
         {"method": "GET", "path": "/api/agent/overview", "desc": "统计 / 近期动态 / 考试 / 提醒"},
@@ -163,7 +171,7 @@ class Handler(BaseHTTPRequestHandler):
         p, q = u.path, parse_qs(u.query)
 
         if p in ("/", "/index.html"):
-            return self._static("index.html")
+            return self._send(200, render_board_html(), "text/html; charset=utf-8")
         if p.startswith("/static/"):
             return self._static(p[len("/static/"):])
 
@@ -198,7 +206,7 @@ class Handler(BaseHTTPRequestHandler):
                                     "offset": off, "items": items})
         if p == "/api/agent/exams":
             return self._json(200, {"ok": True, "items": store.exams(CON)})
-        if p == "/api/agent/notices":
+        if p in ("/api/notices", "/api/agent/notices"):
             unread, items = store.notices(CON, limit=one("limit", 30))
             return self._json(200, {"ok": True, "unread": unread, "items": items})
         if p in ("/api/agent/info", "/api/agent/schema", "/api/agent/openapi.json"):
@@ -252,6 +260,21 @@ class Handler(BaseHTTPRequestHandler):
             created, eid = store.add_exam(CON, company, b.get("kind"), b.get("when"),
                                           b.get("place", ""), b.get("link", ""), b.get("note", ""))
             return self._json(200, {"ok": True, "created": created, "id": eid})
+
+        if p == "/api/notices":
+            action = (b.get("action") or "").strip()
+            if action in ("read", "clear"):
+                CON.execute("UPDATE notices SET read = 1" if action == "clear"
+                            else "UPDATE notices SET read = 1")
+                CON.commit()
+            unread, items = store.notices(CON, limit=30)
+            return self._json(200, {"ok": True, "unread": unread,
+                                    "items": [{"company": i["company"], "text": i["text"],
+                                               "ts": i["at"], "read": False} for i in items]})
+
+        # 旧看板的对话/上传能力在本机版下线，保留端点形状以便前端优雅降级
+        if p in ("/api/chat", "/api/abort", "/api/reset", "/api/upload"):
+            return self._json(410, {"ok": False, "error": "该能力在本机看板已下线（410）"})
 
         if p == "/api/agent/render":
             return self._json(200, {"ok": True, "rendered": True, "seconds": 0.0,

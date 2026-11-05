@@ -36,6 +36,15 @@
 \`apply_link\` 恒为 object 或 \`""\`（永不为 null）、\`limit<=0\` 钳到 1、\`limit\` 上限 500/200、
 \`offset\` 钳制、DELETE 必须先过 \`confirm:true\`、POST 先校验 \`company\`、\`/info\`=\`/schema\`=\`/openapi.json\`。
 
+## 前端
+
+页面由 `work/board/static/template.html` 渲染：服务端把 `__DATA__` 替换成当前库的
+8 个集合（`apps/jobs/codes/unapplied/ended/rules/exams/links` + `stats`），因此无需构建链，
+改样式直接改模板。模板视觉取自 `D:\KB\board-frontend-template`（原看板页面的抽出格式包）。
+
+模板里"问我"对话面板的 `/api/chat`、`/api/abort`、`/api/reset`、`/api/upload` 在本机版返回 410，
+界面会优雅降级；`/api/notices` 走本机提醒表。
+
 ## 契约来源
 
 \`research/看板契约-20261105.md\`（从手册 v1.4.0、客户端源码、数据快照与一次只读线上探测重建）。
