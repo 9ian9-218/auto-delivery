@@ -37,7 +37,8 @@ def test_manifest_parse():
     ]))
     got = ci.load_manifest(man)
     assert got["functional"] == ["a/*.py", "b.md"], got
-    assert got["generated"] == ["data/**"], got
+    # 解析器会把尾部 "**" 规范成 "**/*"（兼容 Python 3.11：否则只匹配目录）
+    assert got["generated"] == ["data/**/*"], got
 
 
 def test_manifest_rejects_orphan_and_empty():
