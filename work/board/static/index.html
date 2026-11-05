@@ -54,15 +54,15 @@
 
 <div class="cards" id="cards"></div>
 
-<nav>
-  <button data-tab="overview" class="on">概览</button>
-  <button data-tab="apps">投递记录</button>
-  <button data-tab="unapplied">未投递</button>
-  <button data-tab="exams">考试</button>
-  <button data-tab="notices">提醒</button>
+<nav role="tablist" aria-label="看板视图">
+  <button role="tab" data-tab="overview" aria-selected="true" class="on">概览</button>
+  <button role="tab" data-tab="apps" aria-selected="false">投递记录</button>
+  <button role="tab" data-tab="unapplied" aria-selected="false">未投递</button>
+  <button role="tab" data-tab="exams" aria-selected="false">考试</button>
+  <button role="tab" data-tab="notices" aria-selected="false">提醒</button>
 </nav>
 
-<main id="main"><div class="muted">加载中…</div></main>
+<main id="main" role="tabpanel" aria-live="polite"><div class="muted">加载中…</div></main>
 
 <script>
 var API = "/api/agent";
@@ -159,7 +159,9 @@ function renderNotices() {
 function show(tab) {
   state.tab = tab;
   Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
-    b.classList.toggle("on", b.dataset.tab === tab);
+    var on = b.dataset.tab === tab;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
   });
   if (tab === "overview") get(API + "/overview").then(renderOverview);
   if (tab === "apps") renderApps();
