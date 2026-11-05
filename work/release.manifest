@@ -25,6 +25,7 @@ work/board/*.json
 work/board/static/*.html
 README.md
 LICENSE
+.github/workflows/*.yml
 work/rfa/*.py
 work/rfa/ccpi_desc.txt
 docs/**

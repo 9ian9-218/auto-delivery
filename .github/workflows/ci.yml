@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # 隔离判据：版本库里的文件必须全在 work/release.manifest 里，且无 PII、无写死路径
+      - name: isolation (L1/L2/L3)
+        run: python work/tools/check_isolation.py --strict
+
+      # 判据自身的单测
+      - name: isolation unit tests
+        run: python work/tests/test_isolation.py
+
+      # 本机看板 API 的端到端回归（临时库，不碰真实数据）
+      - name: board api tests
+        run: python work/tests/test_board_api.py
+
+      # 分发预检（含 PII 闸门），不生成 zip
+      - name: release preflight
+        run: python work/tools/pack_release.py
