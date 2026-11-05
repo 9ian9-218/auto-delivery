@@ -21,6 +21,8 @@ Thumbs.db
 .DS_Store
 .zcode/
 .zcodeignore
+# 工具本地缓存（deck 插件等的运行态，不是项目功能）
+.dsh-*-cache/
 skills-lock.json
 
 # ─── 浏览器数据与运行日志 ────────────────────────────────
