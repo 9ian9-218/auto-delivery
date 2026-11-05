@@ -1,0 +1,116 @@
+{
+  "_comment": "本机看板的示例数据（虚构公司，供新用户首次 --seed 使用；真实数据请从你自己的旧看板导出）",
+  "apps": [
+    {
+      "company": "示例科技",
+      "position": "后端开发工程师",
+      "status": "已投递",
+      "date": "2026-09-20",
+      "stageDate": "2026-09-20",
+      "n": 1
+    },
+    {
+      "company": "样例数据",
+      "position": "算法工程师",
+      "status": "笔试中",
+      "date": "2026-09-25",
+      "stageDate": "2026-09-28",
+      "n": 2
+    },
+    {
+      "company": "虚构集团",
+      "position": "测试开发",
+      "status": "面试中",
+      "date": "2026-09-30",
+      "stageDate": "2026-10-08",
+      "n": 1
+    }
+  ],
+  "jobs": [
+    {
+      "company": "示例科技",
+      "industry": "科技",
+      "batch": "27届秋招",
+      "date": "2026-09-01",
+      "direction": "研发",
+      "status": "",
+      "applied": "",
+      "applied_at": ""
+    },
+    {
+      "company": "样例数据",
+      "industry": "科技",
+      "batch": "27届秋招",
+      "date": "2026-09-02",
+      "direction": "算法",
+      "status": "",
+      "applied": "",
+      "applied_at": ""
+    }
+  ],
+  "codes": [
+    {
+      "company": "示例科技",
+      "group": "技术",
+      "code": "DEMO01",
+      "refOnly": false
+    }
+  ],
+  "unapplied": [
+    {
+      "company": "未投公司甲",
+      "industry": "制造",
+      "batch": "27届秋招",
+      "date": "2026.10.01",
+      "direction": "研发",
+      "code": "",
+      "source": "岗位库"
+    },
+    {
+      "company": "未投公司乙",
+      "industry": "金融",
+      "batch": "27届秋招",
+      "date": "2026.10.02",
+      "direction": "数据",
+      "code": "",
+      "source": "岗位库"
+    }
+  ],
+  "ended": [
+    [
+      "已结束公司",
+      "27届秋招",
+      "2026-09-10"
+    ]
+  ],
+  "rules": [
+    [
+      "示例科技",
+      "学历",
+      "本科及以上"
+    ],
+    [
+      "样例数据",
+      "专业",
+      "计算机相关"
+    ]
+  ],
+  "exams": [
+    {
+      "company": "虚构集团",
+      "kind": "面试",
+      "when": "2026-10-20 10:00",
+      "place": "线上会议",
+      "link": "",
+      "note": "示例"
+    }
+  ],
+  "links": {
+    "示例科技": {
+      "url": "https://example.com/jobs",
+      "code": "DEMO01",
+      "note": "",
+      "updated": "2026-10-01"
+    }
+  }
+}

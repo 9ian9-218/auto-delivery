@@ -57,6 +57,8 @@ SEAM_EXEMPT = {
     "work/tools/pack_release.py": "只在排除规则里出现这些文件名，从不读取",
     "work/tools/check_isolation.py": "自检脚本本身",
     "work/tools/profile_sync.py": "档案三源比对工具：只读比对，路径按仓库根约定推导（已知缺口，未纳入本次改造）",
+    ".agents/skills/auto-resume-submit/scripts/qiuzhao_api.py":
+        "看板客户端：只读 user_config 的 dashboard_url 一个字段，且必须能脱离仓库单独运行，故不 import work/tools 的模块",
 }
 
 # ── L1：必须被忽略 / 必须可追踪 的代表性路径 ──────────────

@@ -3,7 +3,8 @@
 """qiuzhao_api.py — 秋招看板 Agent API 客户端（直写 REST + 查询封装层）
 
 【项目铁律（2026-10-28）】
-- 本项目下**仅允许访问 8898 端口的秋招看板**（http://100.73.185.103:8898）。
+- 默认访问本机看板 http://127.0.0.1:8898；私有部署用 QIUZHAO_API_URL 或
+  work/user_config.json 的 dashboard_url 覆盖。
 - **严禁使用 28898 端口看板**（求职看板），代码层已施加硬拦截。
 
 根据 2026-10-28 看板 API 规范升级：
@@ -48,7 +49,27 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-DEFAULT_QIUZHAO_URL = "http://100.73.185.103:8898"
+DEFAULT_QIUZHAO_URL = "http://127.0.0.1:8898"   # 本机看板（work/board/）
+
+
+def _default_base_url() -> str:
+    """默认看板地址：环境变量 > work/user_config.json 的 dashboard_url > 本机看板。
+
+    私有部署把地址写进 user_config.json，行为不变；新用户不配置时直接连本机看板。
+    """
+    for key in ("QIUZHAO_API_URL", "QIUZHAO_URL"):
+        v = os.environ.get(key, "").strip()
+        if v:
+            return v
+    try:
+        cfg_path = Path(__file__).resolve().parents[4] / "work" / "user_config.json"
+        if cfg_path.is_file():
+            v = json.loads(cfg_path.read_text(encoding="utf-8")).get("dashboard_url", "")
+            if v and "<" not in str(v):
+                return str(v)
+    except Exception:                                          # noqa: BLE001
+        pass
+    return DEFAULT_QIUZHAO_URL
 # 严禁端口黑名单：本项目仅使用 8898 端口秋招看板，严禁使用 28898 端口
 FORBIDDEN_PORTS = ("28898",)
 
@@ -87,7 +108,7 @@ class QiuzhaoAgentClient:
             base_url
             or os.environ.get("QIUZHAO_API_URL")
             or os.environ.get("QIUZHAO_URL")
-            or DEFAULT_QIUZHAO_URL
+            or _default_base_url()
         )
         for fp in FORBIDDEN_PORTS:
             if fp in raw_url:

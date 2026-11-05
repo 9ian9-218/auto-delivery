@@ -63,6 +63,7 @@ archive/
 work/board/*
 !work/board/*.py
 !work/board/*.md
+!work/board/*.json
 !work/board/static/
 !work/board/static/*
 

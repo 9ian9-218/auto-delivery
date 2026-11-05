@@ -6,7 +6,7 @@
 //   node notify_dashboard.mjs "公司=腾讯；岗位=后台开发；方式=官网直投；投递日期=2026-10-28"
 //   node notify_dashboard.mjs "公司=腾讯；岗位=后台开发；投递日期=2026-10-28"（可解析出公司才直写）
 
-const DEFAULT_URL = "http://100.73.185.103:8898";
+const DEFAULT_URL = process.env.QIUZHAO_API_URL || "http://127.0.0.1:8898";
 const base = process.env.QIUZHAO_URL || DEFAULT_URL;
 if (base.includes("28898")) {
   console.error("【项目铁律拦截】本项目下仅允许访问 8898 端口看板，严禁访问 28898 端口！");

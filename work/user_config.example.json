@@ -5,7 +5,7 @@
   "browser_project_root": "<dual-track-browser 项目路径，如 E:\\\\dual-track-browser>",
   "browser_service": "http://127.0.0.1:8792",
   "browser_debug_port": 9222,
-  "dashboard_url": "<秋招看板地址，仅 8898 端口>",
+  "dashboard_url": "http://127.0.0.1:8898",
   "user": {
     "name": "<真实姓名>",
     "phone": "<登录手机号>",

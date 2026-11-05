@@ -21,7 +21,19 @@ import urllib.request
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-BASE = "http://100.73.185.103:8898"
+def _board_base():
+    v = os.environ.get("QIUZHAO_API_URL", "").strip()
+    if v:
+        return v
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from user_config import cfg as _c
+        return str(_c.dashboard_url)
+    except Exception:                                          # noqa: BLE001
+        return "http://127.0.0.1:8898"
+
+
+BASE = _board_base()
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DATA = os.path.join(ROOT, "work", "_archive", "20261103", "board_data.json")
 BAK = os.path.join(ROOT, "work", "industry_backup.json")

@@ -21,7 +21,10 @@ work/tools/*.py
 work/tests/*.py
 work/board/*.py
 work/board/*.md
+work/board/*.json
 work/board/static/*.html
+README.md
+LICENSE
 work/rfa/*.py
 work/rfa/ccpi_desc.txt
 docs/**

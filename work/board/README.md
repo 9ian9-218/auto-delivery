@@ -4,8 +4,10 @@
 
 ## 启动
 
-    python work/board/server.py --seed work/_archive/20261103/board_data.json   # 首次：导入初始数据
-    python work/board/server.py                                                 # 之后直接启动
+    python work/board/server.py --seed work/board/example_snapshot.json   # 首次：导入示例数据
+    python work/board/server.py                                           # 之后直接启动
+
+已有旧看板导出的 `board_data.json` 时，把 `--seed` 换成它即可（字段同形，幂等导入）。
 
 默认 \`127.0.0.1:8898\`，数据库 \`data/board.db\`（已在 .gitignore 内）。浏览器打开 <http://127.0.0.1:8898/>。
 

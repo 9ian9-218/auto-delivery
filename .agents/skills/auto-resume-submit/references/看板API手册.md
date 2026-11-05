@@ -1,8 +1,8 @@
-> # 📌 项目铁律（D:\default 项目 · 2026-10-28 用户明确指示）
+> # 📌 看板地址与边界
 >
-> **本项目只允许使用 8898 端口的秋招看板：http://100.73.185.103:8898（board key qiuzhao，工具前缀 qiuzhao_*）。**
-> **严禁使用 28898 端口看板（http://47.116.208.4:28898, board key qiuzhi）** —— 不得连接、读取或写入，任何形式都不行。
-> 本文所有涉及 :28898 / qiuzhi 的段落仅为文档原文，一律不适用本项目；实际调用一律走 :8898。
+> **默认看板是本机服务 `http://127.0.0.1:8898`（`work/board/`，board key `qiuzhao`，工具前缀 `qiuzhao_*`）。**
+> 私有部署用 `QIUZHAO_API_URL` 或 `work/user_config.json` 的 `dashboard_url` 覆盖；本文里的 `{base_url}` 指的就是这个地址。
+> 旧文档残留的 `:28898` / `qiuzhi`（求职看板）与任何内网地址都不是本仓库的默认配置，`scripts/qiuzhao_api.py` 仍对 28898 做代码级拦截。
 > 本地客户端 scripts/qiuzhao_api.py 已做硬拦截：URL 含 28898 或 oard="qiuzhi" 直接抛 ValueError。
 >
 > 下列做法在本项目中被禁止：
@@ -28,7 +28,7 @@
 
 | 项 | 秋招看板 | 求职看板 |
 |---|---|---|
-| Base URL | `http://100.73.185.103:8898`（Tailscale 内网） | `http://47.116.208.4:28898`（公网） |
+| Base URL | `{base_url}`（默认本机 `http://127.0.0.1:8898`） | 不属于本仓库 |
 | board key | `qiuzhao` | `qiuzhi` |
 | 主表（唯一真源） | `秋招报告/秋招情报.xlsx` | `求职报告/求职情报.xlsx` |
 | 内推链接 | `data/内推链接.json` | `data/qiuzhi/内推链接.json` |
@@ -54,7 +54,7 @@
 ## 2. 30 秒上手
 
 ```bash
-BASE=http://100.73.185.103:8898        # 求职看板换 http://47.116.208.4:28898
+BASE=${QIUZHAO_API_URL:-http://127.0.0.1:8898}   # 私有部署用环境变量覆盖
 
 # 看大盘（人读的 Markdown）
 curl -s "$BASE/api/agent/overview?format=text"

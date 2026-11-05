@@ -10,7 +10,7 @@
 
 import fs from "node:fs";
 
-const DEFAULT_URL = "http://100.73.185.103:8898";
+const DEFAULT_URL = process.env.QIUZHAO_API_URL || "http://127.0.0.1:8898";
 // 项目铁律：本项目只允许 8898 端口秋招看板，严禁 28898 求职看板
 if ((process.env.QIUZHAO_URL || "").includes("28898")) {
   console.error("【项目铁律拦截】本项目下仅允许访问 8898 端口看板，严禁访问 28898 端口！");
