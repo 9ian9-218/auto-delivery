@@ -93,6 +93,9 @@ def expand(root, patterns):
     root = Path(root)
     found, empty = {}, []
     for pat in patterns:
+        # Python 3.11 的 "x/**" 只返回目录（3.13 才含文件），补成 "x/**/*" 两种版本一致
+        if pat.endswith("/**"):
+            pat = pat + "/*"
         hits = [p for p in root.glob(pat) if p.is_file()]
         if not hits:
             empty.append(pat)
