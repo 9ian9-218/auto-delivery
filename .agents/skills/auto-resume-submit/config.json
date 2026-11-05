@@ -1,0 +1,13 @@
+{
+  "_comment": "旧版配置（兼容保留）。真实用户数据请放 work/user_config.json，本文件不应含个人身份信息。",
+  "browser_project_root": "",
+  "workspace_root": "",
+  "browser_service": "http://127.0.0.1:8792",
+  "dashboard_url": "",
+  "resume_pdf": "",
+  "resume_docx": "",
+  "login_phone": "",
+  "target_grad_year": 0,
+  "task_timeout_seconds": 900,
+  "default_pick_count": 5
+}

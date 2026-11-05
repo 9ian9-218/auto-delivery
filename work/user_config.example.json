@@ -1,0 +1,51 @@
+{
+  "_comment": "用户态配置模板 — 复制为 work/user_config.json 后填写。此文件不含任何真实身份信息，可随项目分发。",
+  "_schema": 1,
+  "workspace_root": "<项目绝对路径，如 D:\\\\auto-delivery>",
+  "browser_project_root": "<dual-track-browser 项目路径，如 E:\\\\dual-track-browser>",
+  "browser_service": "http://127.0.0.1:8792",
+  "browser_debug_port": 9222,
+  "dashboard_url": "<秋招看板地址，仅 8898 端口>",
+  "user": {
+    "name": "<真实姓名>",
+    "phone": "<登录手机号>",
+    "email": "<常用邮箱>",
+    "target_grad_year": 2027,
+    "target_titles": [
+      "AI应用开发工程师",
+      "Agent开发工程师"
+    ],
+    "excluded_roles": [
+      "算法岗",
+      "AI Infra 岗",
+      "纯 C++ 方向岗位",
+      "产品岗"
+    ],
+    "preferred_cities": [
+      "上海",
+      "杭州",
+      "南京",
+      "苏州"
+    ],
+    "excluded_cities": [
+      "北京"
+    ]
+  },
+  "resume": {
+    "pdf": "<workspace>/data/resume/简历-<姓名>-硕士.pdf",
+    "docx": "<workspace>/data/resume/简历-<姓名>-硕士.docx",
+    "transcript_master": "<workspace>/data/resume/硕士成绩单.pdf",
+    "transcript_bachelor": "<workspace>/data/resume/本科生学习成绩单.pdf",
+    "id_card_front": "<workspace>/data/resume/身份证_正面.jpg",
+    "id_card_back": "<workspace>/data/resume/身份证_背面.jpg",
+    "photo": "<workspace>/data/resume/证件照.png",
+    "life_photo": "<workspace>/data/photo/生活照.jpg"
+  },
+  "mail": {
+    "auth_file": "work/mail_auth.json"
+  },
+  "limits": {
+    "task_timeout_seconds": 900,
+    "default_pick_count": 5
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 2,
+  "about": "投递断点 work/ckpt_<公司>.json 的唯一契约。真源规则见 .agents/skills/campus-apply-pipeline/references/application-playbook.md §1。只增不删：迁移只补规范键，原键保留，state_raw 留存原值。",
+  "required": ["schema_version", "attempt_id", "company", "state", "updated_at"],
+  "canonical": {
+    "schema_version": "本文件版本",
+    "attempt_id": "本次尝试唯一标识（缺失时由公司名+mtime 派生）",
+    "company": "公司名（工商全称或通用简称，用于公司级去重）",
+    "position": "岗位名",
+    "job_id": "官网岗位标识",
+    "job_url": "岗位详情/申请页 URL",
+    "channel": "渠道：官网 / 北森 / Moka / 国聘 / BOSS / 51job / 邮箱",
+    "city": "工作地（Base 判定用，不看注册地）",
+    "state": "状态机取值见 states",
+    "state_raw": "迁移前的原始状态值（仅当与 state 不同才写）",
+    "needs_human": "需要用户接管的动作：captcha_slider / captcha_point / signature / missing_field / other",
+    "reason": "阻塞或排除原因（人类可读，一句话）",
+    "proof": "取证：{record_url, application_id, submitted_at, screenshot}",
+    "dashboard_state": "看板回写状态：not_written / record_pending / recorded / excluded / pending_8898_down",
+    "updated_at": "最后更新时间 ISO8601"
+  },
+  "key_aliases": {
+    "position": ["target_position", "selected_position", "position_name"],
+    "job_id": ["job_ad_id", "job_number"],
+    "job_url": ["job_detail_url", "apply_url", "records_url", "announcement_url", "position_detail_url"],
+    "reason": ["block_reason", "blocker", "skip_reason", "skip_reason_text"],
+    "dashboard_state": ["dashboard_action", "dashboard_write", "dashboard_return", "dashboard_note", "dashboard_verification"]
+  },
+  "states": {
+    "draft": "已开始填写，未到可提交",
+    "needs_input": "等用户补信息或接管（验证码/签名/缺必填）",
+    "awaiting_verification": "已提交但官网结果未核实（含邮箱已投递未确认）",
+    "submitted": "官网核验成功，可写看板",
+    "skipped": "主动排除（红线/错届/北京 base/已投同公司）",
+    "blocked": "技术阻塞（控件不可程序化/站点故障），非用户可解"
+  },
+  "state_map": {
+    "awaiting_human_captcha": {"state": "needs_input", "needs_human": "captcha_slider"},
+    "awaiting_user_signature": {"state": "needs_input", "needs_human": "signature"},
+    "awaiting_user_manual_fields_and_submit": {"state": "needs_input", "needs_human": "missing_field"},
+    "needs_reassessment": {"state": "draft", "needs_human": null},
+    "submitted_verified": {"state": "submitted", "needs_human": null},
+    "smtp_accepted": {"state": "awaiting_verification", "needs_human": null}
+  },
+  "dashboard_states": ["not_written", "record_pending", "recorded", "excluded", "pending_8898_down"],
+  "dashboard_map": {
+    "pending_report": "not_written",
+    "to_mark_terminated": "not_written"
+  },
+  "defaults": {
+    "missing_state": "draft"
+  },
+  "terminal": ["submitted", "skipped"],
+  "notes": [
+    "state 只允许 states 的 6 个取值；子类型写 needs_human 或 reason，不再自创状态词。",
+    "submitted 之外的任何状态都不得写入看板已投递（application-playbook §6）。",
+    "proof 只放链接与编号，不放简历内容、验证码、会话 token。"
+  ]
+}

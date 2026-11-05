@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "updated_at": "",
+  "sources": {
+    "confirmed_profile": "",
+    "resume_config": ""
+  },
+  "candidate": {
+    "name": "",
+    "phone": "",
+    "email": "",
+    "resume_pdf": "",
+    "birth_date": "",
+    "gender": "",
+    "nationality": null,
+    "top_degree": null,
+    "top_degree_title": null,
+    "grad_date": "",
+    "language": {
+      "language": "",
+      "cert": "",
+      "score": null,
+      "band": ""
+    },
+    "education": [],
+    "internships": [],
+    "misc_answers": {
+      "accept_adjustment": null,
+      "availability": "",
+      "salary": "",
+      "high_school": {
+        "name": "",
+        "start": "",
+        "end": ""
+      }
+    }
+  },
+  "targets": {
+    "grad_year": null,
+    "role_keywords": [],
+    "role_exclusions": [],
+    "city_priority": [],
+    "accept_relocate": null,
+    "excluded_companies": [],
+    "excluded_industries": [],
+    "dedupe_scope": "company",
+    "max_round_applications": 3
+  },
+  "platforms": {
+    "cdp_port": 9222,
+    "browser_headless": false,
+    "sms_service": "",
+    "logins": {},
+    "referral_list_path": ""
+  },
+  "bookkeeping": {
+    "dashboard_api": "",
+    "dashboard_client": "",
+    "result_json": "work/result.json",
+    "auto_report": true
+  }
+}
